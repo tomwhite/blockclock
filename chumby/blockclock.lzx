@@ -1,0 +1,89 @@
+<canvas proxied="false" width="320" height="240">
+	<script>
+	<![CDATA[
+	    var tick;
+
+	    var timerIncrement = 1000;
+
+		var delegate;
+		
+	    function startClock() {
+			tick = new Time();
+			drawClock(tick);
+			delegate = new LzDelegate(this, "updateClock");
+			LzTimer.addTimer(delegate, 1000);
+		}
+		function updateClock() {
+	      var tock = new Time();
+	      if (!tock.equals(tick)) {
+	        tick = tock;
+	        drawClock(tick);
+	      }
+			LzTimer.resetTimer(delegate, 1000);
+		}
+		function drawClock(time) {
+	      block.setAttribute("x", 40 + time.fiveMinuteInterval * 20);
+	      block.setAttribute("y", time.hour * 20);
+	    }
+		
+	    // I store time as the pair (h, m), where h is the hour
+	    // (between 0 and 11 inclusive), and m is the five minute interval
+	    // also between 0 and 11 inclusive).
+	    function Time() {
+	      function equals(time) {
+	        return time != null && this.hour == time.hour && this.fiveMinuteInterval == time.fiveMinuteInterval;
+	      }
+	      var now = new Date();
+	      this.hour = now.getHours() % 12;
+	      this.fiveMinuteInterval = Math.floor(now.getMinutes() / 5);
+	      this.equals = equals;
+	    }
+	  ]]>
+	</script>
+	
+	  <drawview width="${this.parent.width}" height="${this.parent.height}" x="0" y="0" bgcolor="${this.parent.bgcolor}">
+    <method event="oninit">
+      this.rect(200,200,200,100);
+      this.closePath();
+
+      this.strokeStyle = 0xffff00;
+      this.lineWidth = 5;
+      this.stroke();
+    </method>
+  </drawview>
+
+    <view x="40" y="0" width="240" height="240" bgcolor="#ffffff"/>
+	<view x="0" y="0" bgcolor="red" width="20" height="20" id="block"/>
+	
+	<drawview width="240" height="240">
+  <handler name="oninit">
+   this.strokeStyle = 0x000000;
+   this.moveTo(100, 0);
+   this.lineTo(100, 240);
+   this.lineWidth = 2;
+
+	this.closePath();
+/*
+   this.moveTo(160, 0);
+   this.lineTo(160, 240);
+
+   this.moveTo(220, 0);
+   this.lineTo(220, 240);
+
+   this.moveTo(40, 60);
+   this.lineTo(280, 60);
+
+   this.moveTo(40, 120);
+   this.lineTo(280, 120);
+
+   this.moveTo(40, 180);
+   this.lineTo(280, 180);
+   */
+
+   this.stroke();
+
+   startClock();
+  </handler>
+</drawview>
+
+</canvas>

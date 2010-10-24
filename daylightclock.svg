@@ -1,0 +1,206 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" 
+  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!--
+  Block Clock
+
+  Copyright 2002 Tom White
+
+-->
+<svg viewBox="0 0 12 12" preserveAspectRatio="xMidYMin"
+     xmlns="http://www.w3.org/2000/svg"
+     scriptImplementation="Adobe"
+     onload="startClock(evt)">
+  <script type="text/ecmascript"><![CDATA[
+    var tick;
+    var am;
+    
+    var latitude = 51.30;
+    var longitude = 0.07;
+    var timerIncrement = 1000;
+    
+    var block;
+    var darkness1;
+    var darkness2;
+    function startClock(evt) {
+      window.updateClock = updateClock
+      block = evt.target.ownerDocument.getElementById("block");
+      darkness1 = evt.target.ownerDocument.getElementById("darkness1");
+      darkness2 = evt.target.ownerDocument.getElementById("darkness2");
+      updateClock();
+    }
+    function updateClock() {
+      var morning = new Date().getHours() < 12;
+      if (morning != am) {
+        am = morning;
+        drawDarkness(am);
+      }
+      var tock = new Time();
+      if (!tock.equals(tick)) {
+        tick = tock;
+        drawClock(tick);
+      }
+      setTimeout("updateClock()", timerIncrement);
+    }
+    function drawClock(time) {
+      block.setAttribute("x", time.fiveMinuteInterval);
+      block.setAttribute("y", time.hour);
+    }
+    
+    // I store time as the pair (h, m), where h is the hour
+    // (between 0 and 11 inclusive), and m is the five minute interval
+    // also between 0 and 11 inclusive).
+    function Time() {
+      function equals(time) {
+        return time != null && this.hour == time.hour && this.fiveMinuteInterval == time.fiveMinuteInterval;
+      }
+      var now = new Date();
+      this.hour = now.getHours() % 12;
+      this.fiveMinuteInterval = Math.floor(now.getMinutes() / 5);
+      this.equals = equals;
+    }
+    
+    function drawDarkness(am) {
+      if (am) {
+        var rise = sunrise(new Date(), latitude, longitude);
+        var hour = Math.floor(mod(rise * 24, 12));
+        var minutes = mod(rise * 24 * 12, 12);
+        drawRectangle(darkness1, 0, 0, 12, hour);
+        if (minutes != 0) {
+          drawRectangle(darkness2, 0, 0, minutes, hour + 1);
+        } else {
+          darkness2.setAttribute("opacity", 1);
+        }
+      } else {
+        var set = sunset(new Date(), latitude, longitude);
+        var hour = Math.floor(mod(set * 24, 12));
+        var minutes = mod(set * 24 * 12, 12);
+        drawRectangle(darkness1, 0, hour + 1, 12, 11 - hour);
+        drawRectangle(darkness2, minutes, hour, 12 - minutes, 12 - hour);
+      }
+    }
+    
+    function drawRectangle(rect, x, y, width, height) {
+      rect.setAttribute("opacity", 1);
+      rect.setAttribute("x", x);
+      rect.setAttribute("y", y);
+      rect.setAttribute("width", width);
+      rect.setAttribute("height", height);
+    }
+    
+    /*
+    The following functions for calculating the local time of sunrise and sunset
+    were adapted from the functions given in "Calendrical Calculations" by Nachum Dershowitz
+    and Edward M. Reingold (Cambridge University Press 1997).
+    The licence govening these functions can be found at
+    http://emr.cs.iit.edu/home/reingold/calendar-book/first-edition/license.shtml
+    */
+    
+    function gregorianLeapYear(gYear) {
+      var x = mod(gYear, 400);
+      return (mod(gYear, 4) == 0 && x != 100 && x != 200 && x != 300)
+    }
+    
+    function fixedFromGregorian(month, day, year) {
+      var x;
+      if (month <= 2) {
+        x = 0;
+      } else if (month > 2 && gregorianLeapYear(year)) {
+        x = -1;
+      } else {
+        x = -2;
+      }
+      return 1 - 1 + 365 * (year - 1) + Math.floor((year - 1) / 4) - Math.floor((year - 1) / 100) + Math.floor((year - 1) / 400) + Math.floor((367 * month - 362) / 12) + x + day;
+    }
+    
+    function gregorianDateDifference(month1, day1, year1, month2, day2, year2) {
+      return fixedFromGregorian(month2, day2, year2) - fixedFromGregorian(month1, day1, year1);
+    }
+    
+    function dayNumber(month, day, year) {
+      return gregorianDateDifference(12, 31, year - 1, month, day, year);
+    }
+
+    function sunrise(date, latitude, longitude) {
+      return mod(solarMoment(date, latitude, longitude, -0.25) - (date.getTimezoneOffset() / (24 * 60)), 1);
+    }
+    function sunset(date, latitude, longitude) {
+      return mod(solarMoment(date, latitude, longitude, 0.25) - (date.getTimezoneOffset() / (24 * 60)), 1);
+    }
+    function solarMoment(date, latitude, longitude, riseOrSet) {
+      var approx = dayNumber(date.getMonth() + 1, date.getDate(), date.getYear()) + 0.5 + riseOrSet + (longitude / -360);
+      var anomaly = 0.9856 * approx - 3.289;
+      var sun = degrees(anomaly + 1.916 * sin(anomaly) + 282.634 + 0.020 * sin(2 * anomaly));
+      var rightAscension = arctan(cos(23.441884) * tan(sun), Math.floor(sun / 90) + 1)
+      var declination = arcsin(sin(23.441884) * sin(sun))
+      var r = cos(90.833333) - sin(declination) * sin(latitude);
+      var local = signum(riseOrSet) * arccos(r / (cos(declination) * cos(latitude)))
+      return mod(((local + rightAscension) / 360) - 0.27592 - 0.00273792 * approx, 1);
+    }
+    
+    function degrees(x) {
+      return mod(x, 360);
+    }
+    function degreesToRadians(x) {
+      return x * Math.PI / 180;
+    }
+    function radiansToDegrees(x) {
+      return x * 180 / Math.PI;
+    }
+    function sin(x) {
+      return Math.sin(degreesToRadians(x));
+    }
+    function cos(x) {
+      return Math.cos(degreesToRadians(x));
+    }
+    function tan(x) {
+      return Math.tan(degreesToRadians(x));
+    }
+
+    function arcsin(x) {
+      return radiansToDegrees(Math.asin(x));
+    }
+    function arccos(x) {
+      return radiansToDegrees(Math.acos(x));
+    }
+    function arctan(x, quad) {
+      if (quad == 1 || quad == 4) {
+        return radiansToDegrees(Math.atan(x));
+      } else {
+        return radiansToDegrees(Math.atan(x)) + 180;
+      }
+    }
+    function mod(x, y) {
+      var result = x % y;
+      if (result < 0) {
+        result = result + y;
+      }
+      return result;
+    }
+    function signum(x) {
+      if (x < 0) {
+        return -1;
+      } else if (x > 0) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+  ]]></script>
+  
+  <desc>A simple digital block clock with hours of darkness.</desc>
+  <title>Block Clock</title>
+
+  <rect id="darkness1" x="0" y="0" width="0" height="0" fill="lightblue" opacity="0" />
+  <rect id="darkness2" x="0" y="0" width="0" height="0" fill="lightblue" opacity="0" />
+  
+  <rect id="block" x="-1" y="-1" width="1" height="1" fill="red" />
+  <g stroke="black" stroke-width="0.1">
+    <line x1="3" y1="0" x2="3" y2="12"/>
+    <line x1="6" y1="0" x2="6" y2="12"/>
+    <line x1="9" y1="0" x2="9" y2="12"/>
+    <line x1="0" y1="3" x2="12" y2="3"/>
+    <line x1="0" y1="6" x2="12" y2="6"/>
+    <line x1="0" y1="9" x2="12" y2="9"/>
+  </g>
+</svg>

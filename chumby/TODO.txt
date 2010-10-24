@@ -1,0 +1,14 @@
+ * Use clock example to do ticks better.
+ * Add sun.
+ * Add night sky.
+ * Add configuration to turn on/off sun/night sky.
+ * Add licence.
+ * Sort out scaling.
+ * Format file.
+ * Create flash version
+  * OpenLaszlo
+  * http://www.openlaszlo.org/lps4/docs/developers/compiler.html
+  * bin/lzc --script --runtime=swf7 ~/workspace/blockclock/blockclock.lzx
+  * Use http://pixlr.com/app/ to create thumbnail jpeg
+  * Get lines to be drawn - and black out unused space
+  * Alternative? http://haxe.org/doc/start/flash

@@ -1,0 +1,1247 @@
+_root.LzKeys.gotKeyDown(9, 'extra');_root.LzKeyboardKernel.__keyboardEvent(Key.getCode(), 'onkeydown')_root.LzKeyboardKernel.__keyboardEvent(Key.getCode(), 'onkeyup')_root.LzMouseKernel.rawMouseEvent('onmousedown')_root.LzMouseKernel.rawMouseEvent('onmouseup')_root.LzMouseKernel.handleMouseButton( myView, 'onmousedown')_root.LzMouseKernel.handleMouseButton( myView, 'onmouseup');_root.LzMouseKernel.handleMouseEvent( myView, 'onclick')_root.LzMouseKernel.handleMouseButton( myView, 'onmouseup');_root.LzMouseKernel.handleMouseEvent( myView, 'onmouseupoutside')_root.LzMouseKernel.handleMouseEvent( myView, 'onmouseover')_root.LzMouseKernel.handleMouseEvent( myView, 'onmouseout')_root.LzMouseKernel.handleMouseEvent( myView, 'onmouseout');_root.LzMouseKernel.handleMouseEvent( myView, 'onmousedragout')_root.LzMouseKernel.handleMouseEvent( myView, 'onmouseover');_root.LzMouseKernel.handleMouseEvent( myView, 'onmousedragin')_root.DojoExternalInterface._gatewayReady();stop();_root.DojoExternalInterface._handleJSCall();stop();global[ '$endOfLFCMarker' ];var block = null;
+canvas = new LzCanvas(null, {__LZproxied: "true", bgcolor: 16777215, embedfonts: true, fontname: "Verdana,Vera,sans-serif", fontsize: 11, fontstyle: "plain", height: 240, lpsbuild: "4.1.1", lpsbuilddate: "2008-07-11T15:14:34-0700", lpsrelease: "Production", lpsversion: "4.1.1", proxied: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 1
+                                                  false
+#file 
+
+#endAttribute
+, runtime: "swf7", width: 320});
+#file extensions/drawview.lzx
+#line 258
+                            
+#file extensions/drawview.lzx
+#line 258
+                            
+    mixin DrawviewShared {
+        function DrawviewShared ( parent:LzView? = null , attrs:Object? = null , children:Array? = null, instcall:Boolean  = false) {
+            super(parent, attrs, children, instcall);
+        }
+        function lineTo(x,y) { }
+        function moveTo(x,y) { }
+        function quadraticCurveTo(cx, cy, px, py) {}
+
+        function arc(x, y, radius, startAngle, endAngle,...args) {
+            var clockwise = args[0];
+            var sx = x + radius*Math.cos(startAngle);
+            var sy = y + radius*Math.sin(2 * Math.PI - startAngle);
+            startAngle *= 180/Math.PI;
+            endAngle *= 180/Math.PI;
+            var arc = clockwise == true ? ((endAngle - startAngle) - 360): endAngle - startAngle;
+            //move pen to the point along the circle at startAngle
+            this.moveTo(sx, sy);
+            //retain the center of the arc as the center point passed in.
+            return this._drawArc(x, y, radius, arc, startAngle);
+        }
+
+        function rect(x, y, w, h,...args) {
+            var cornerRadius = args[0];
+            // if the user has defined cornerRadius our task is a bit more complex. :)
+            if (cornerRadius>0) {
+                // init vars
+                var theta, angle, cx, cy, px, py;
+                // make sure that w + h are larger than 2*cornerRadius
+                if (cornerRadius>Math.min(w, h)/2) {
+                    cornerRadius = Math.min(w, h)/2;
+                }
+                // theta = 45 degrees in radians
+                theta = Math.PI/4;
+                // draw top line
+                this.moveTo(x+cornerRadius, y);
+                this.lineTo(x+w-cornerRadius, y);
+                //angle is currently 90 degrees
+                angle = -Math.PI/2;
+                // draw tr corner in two parts
+                cx = x+w-cornerRadius+(Math.cos(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                cy = y+cornerRadius+(Math.sin(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                px = x+w-cornerRadius+(Math.cos(angle+theta)*cornerRadius);
+                py = y+cornerRadius+(Math.sin(angle+theta)*cornerRadius);
+                this.quadraticCurveTo(cx, cy, px, py);
+                angle += theta;
+                cx = x+w-cornerRadius+(Math.cos(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                cy = y+cornerRadius+(Math.sin(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                px = x+w-cornerRadius+(Math.cos(angle+theta)*cornerRadius);
+                py = y+cornerRadius+(Math.sin(angle+theta)*cornerRadius);
+                this.quadraticCurveTo(cx, cy, px, py);
+                // draw right line
+                this.lineTo(x+w, y+h-cornerRadius);
+                // draw br corner
+                angle += theta;
+                cx = x+w-cornerRadius+(Math.cos(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                cy = y+h-cornerRadius+(Math.sin(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                px = x+w-cornerRadius+(Math.cos(angle+theta)*cornerRadius);
+                py = y+h-cornerRadius+(Math.sin(angle+theta)*cornerRadius);
+                this.quadraticCurveTo(cx, cy, px, py);
+                angle += theta;
+                cx = x+w-cornerRadius+(Math.cos(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                cy = y+h-cornerRadius+(Math.sin(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                px = x+w-cornerRadius+(Math.cos(angle+theta)*cornerRadius);
+                py = y+h-cornerRadius+(Math.sin(angle+theta)*cornerRadius);
+                this.quadraticCurveTo(cx, cy, px, py);
+                // draw bottom line
+                this.lineTo(x+cornerRadius, y+h);
+                // draw bl corner
+                angle += theta;
+                cx = x+cornerRadius+(Math.cos(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                cy = y+h-cornerRadius+(Math.sin(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                px = x+cornerRadius+(Math.cos(angle+theta)*cornerRadius);
+                py = y+h-cornerRadius+(Math.sin(angle+theta)*cornerRadius);
+                this.quadraticCurveTo(cx, cy, px, py);
+                angle += theta;
+                cx = x+cornerRadius+(Math.cos(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                cy = y+h-cornerRadius+(Math.sin(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                px = x+cornerRadius+(Math.cos(angle+theta)*cornerRadius);
+                py = y+h-cornerRadius+(Math.sin(angle+theta)*cornerRadius);
+                this.quadraticCurveTo(cx, cy, px, py);
+                // draw left line
+                this.lineTo(x, y+cornerRadius);
+                // draw tl corner
+                angle += theta;
+                cx = x+cornerRadius+(Math.cos(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                cy = y+cornerRadius+(Math.sin(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                px = x+cornerRadius+(Math.cos(angle+theta)*cornerRadius);
+                py = y+cornerRadius+(Math.sin(angle+theta)*cornerRadius);
+                this.quadraticCurveTo(cx, cy, px, py);
+                angle += theta;
+                cx = x+cornerRadius+(Math.cos(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                cy = y+cornerRadius+(Math.sin(angle+(theta/2))*cornerRadius/Math.cos(theta/2));
+                px = x+cornerRadius+(Math.cos(angle+theta)*cornerRadius);
+                py = y+cornerRadius+(Math.sin(angle+theta)*cornerRadius);
+                this.quadraticCurveTo(cx, cy, px, py);
+            } else {
+                // cornerRadius was not defined or = 0. This makes it easy.
+                this.moveTo(x, y);
+                this.lineTo(x+w, y);
+                this.lineTo(x+w, y+h);
+                this.lineTo(x, y+h);
+                this.lineTo(x, y);
+            }
+        }
+
+        function oval(x, y, radius,...args) {
+            var yRadius = args[0];
+            // init variables
+            var theta, xrCtrl, yrCtrl, angle, angleMid, px, py, cx, cy;
+            // if only yRadius is undefined, yRadius = radius
+            if (yRadius == undefined) {
+                yRadius = radius;
+            }
+            var s = (radius < 20 && yRadius < 20) ? 5 : 8;
+            // covert to radians for our calculations
+            theta = Math.PI/ (s / 2);
+            // calculate the distance for the control point
+            xrCtrl = radius/Math.cos(theta/2);
+            yrCtrl = yRadius/Math.cos(theta/2);
+            // start on the right side of the circle
+            angle = 0;
+            this.moveTo(x+radius, y);
+            // this loop draws the circle in n segments
+            for (var i = 0; i<s; i++) {
+                // increment our angles
+                angle += theta;
+                angleMid = angle-(theta/2);
+                // calculate our control point
+                cx = x+Math.cos(angleMid)*xrCtrl;
+                cy = y+Math.sin(angleMid)*yrCtrl;
+                // calculate our end point
+                px = x+Math.cos(angle)*radius;
+                py = y+Math.sin(angle)*yRadius;
+                // draw the circle segment
+                this.quadraticCurveTo(cx, cy, px, py);
+            }
+            return {x:px, y:py};
+        }
+
+        function _drawArc(x, y, radius, arc, startAngle,...args) {
+            var yRadius = args[0];
+            // if yRadius is undefined, yRadius = radius
+            if (yRadius == undefined) {
+                yRadius = radius;
+            }
+            // Init vars
+            var segAngle, theta, angle, angleMid, segs,bx, by, cx, cy;
+            // no sense in drawing more than is needed :)
+            if (Math.abs(arc)>360) {
+                arc = 360;
+            }
+            // Flash uses 8 segments per circle, to match that, we draw in a maximum
+            // of 45 degree segments. First we calculate how many segments are needed
+            // for our arc.
+            segs = Math.ceil(Math.abs(arc)/45);
+            // Now calculate the sweep of each segment
+            segAngle = arc/segs;
+            // The math requires radians rather than degrees. To convert from degrees
+            // use the formula (degrees/180)*Math.PI to get radians. 
+            theta = -(segAngle/180)*Math.PI;
+            // convert angle startAngle to radians
+            angle = -(startAngle/180)*Math.PI;
+
+            // if our arc is larger than 45 degrees, draw as 45 degree segments
+            // so that we match Flash's native circle routines.
+            if (segs>0) {
+                // Loop for drawing arc segments
+                for (var i = 0; i<segs; i++) {
+                    // increment our angle
+                    angle += theta;
+                    // find the angle halfway between the last angle and the new
+                    angleMid = angle-(theta/2);
+                    // calculate our end point
+                    bx = x+Math.cos(angle)*radius;
+                    by = y+Math.sin(angle)*yRadius;
+                    // calculate our control point
+                    cx = x+Math.cos(angleMid)*(radius/Math.cos(theta/2));
+                    cy = y+Math.sin(angleMid)*(yRadius/Math.cos(theta/2));
+                    // draw the arc segment
+                    this.quadraticCurveTo(cx, cy, bx, by);
+                }
+            }
+            // In the native draw methods the user must specify the end point
+            // which means that they always know where they are ending at, but
+            // here the endpoint is unknown unless the user calculates it on their 
+            // own. Lets be nice and let save them the hassle by passing it back. 
+            return {x:bx, y:by};
+        }
+
+        function distance(p0, p1) {
+            // These would be useful generally, but put them inside the
+            // function so they don't pollute the general namespace.
+            var dx = p1.x - p0.x;
+            var dy = p1.y - p0.y;
+            return Math.sqrt(dx*dx+dy*dy);
+        }
+
+        function intersection(p0, p1, p2, p3) {
+                // returns null if they're collinear and non-identical
+                // returns -1 if they're collinear and identical
+                var u = (p3.x-p2.x)*(p0.y-p2.y) - (p3.y-p2.y)*(p0.x-p2.x);
+                var d = (p3.y-p2.y)*(p1.x-p0.x) - (p3.x-p2.x)*(p1.y-p0.y);
+                if (!d) {
+                if (!u) {
+                    return -1;//identical
+                } else {
+                    return null;//non-identical
+                }
+                }
+                u /= d;
+                return {x: p0.x + (p1.x-p0.x) * u,
+                        y: p0.y + (p1.y-p0.y) * u};
+        }
+
+        function midpoint(p0, p1) {
+            return {x: (p0.x+p1.x)/2, y: (p0.y+p1.y)/2};
+        }
+    }
+  
+#file 
+
+#file extensions/drawview.lzx
+#line 853
+                                
+#file extensions/drawview.lzx
+#line 853
+                                
+
+        // Classes that implement an interface must obey the LZX
+        // tag->class mapping convention
+        class $lzc$class_drawview extends LzView with DrawviewShared {
+            if ($swf9) {
+                #passthrough (toplevel:true) {  
+                import flash.geom.Matrix;
+                import flash.geom.Rectangle;
+                import flash.display.BitmapData;
+                }#
+            }
+            // Next two are part of the required LFC tag class protocol
+            static var tagname = 'drawview';
+            static var attributes = new LzInheritedHash(LzView.attributes);
+            static var _colorcache = {};
+            
+            var globalAlpha = 1;
+            var lineWidth = 1;
+            var strokeStyle = '#000000';
+            var fillStyle = '#000000';
+            var context = null;
+            var __path = [];
+            var __pathisopen = false;
+            var __MOVETO_OP = 0;
+            var __LINETO_OP = 1;
+            var __QCURVE_OP = 2;
+            var __contexts = null;
+            var __bitmapmc = null;
+            var __bitmapdata = null;
+            var __drawing = null;
+            var __matrix = null;
+            var __measurewidth = true;
+            var __measureheight = true;
+            
+            var oncontext = LzDeclaredEvent;
+    
+            function $lzc$class_drawview(parent, attrs, children, async) {
+                super(parent, attrs, children, async);
+            }
+
+            override function construct(parent,args) {
+                // default to bitmap caching on    
+                if (args['cachebitmap'] == null) args['cachebitmap'] = true;
+                super.construct(parent, args);
+                this.__contexts = [];
+
+                new LzDelegate( this , "_oninit" , this , "oninit" );
+                new LzDelegate( this , "rebuildBitmap" , this , "onwidth" );
+                new LzDelegate( this , "rebuildBitmap" , this , "onheight" );
+            }
+
+            // Add bitmap data drawing layer
+            function rebuildBitmap (ignore) {
+                if ($swf9) {
+                    return;
+                }
+                if (this['__bitmapmc']) {
+                    this.__bitmapmc.removeMovieClip();
+                }
+
+                var context = this.sprite.getContext();
+                this.__bitmapmc = context.createEmptyMovieClip("__bitmapmc",1000);
+                if ($swf9) {
+                    this.__bitmapdata = new BitmapData(this.width, this.height, true, 0x000000ff);
+                } else {
+                    this.__bitmapdata = new flash.display.BitmapData(this.width, this.height, true, 0x000000ff);
+                }
+                // negative dimensions cause this to be null
+                if (this['__bitmapdata']) this.__bitmapmc.attachBitmap(this.__bitmapdata, 2, "auto", true);
+            }
+    
+            function _oninit(ignore) {
+                var context = this.sprite.getContext();
+                if ($swf8) {
+                    this.rebuildBitmap();
+                    this.drawcontainer = context.createEmptyMovieClip("drawcontainer",1);
+                    this.__drawing = this.drawcontainer.createEmptyMovieClip("drawing",this.drawcontainer.getNextHighestDepth());
+
+                    context = this.drawcontainer;
+                }
+                this.context = context;
+                this.beginPath();
+
+                this.oncontext.sendEvent(context);
+            }
+
+    
+            function beginPath() {
+                //Debug.write('beginPath');
+                this.__path=[]
+                this.__pathisopen = true;
+                this.context.moveTo(0,0);
+            }
+    
+            function closePath() {
+                if (this.__pathisopen && this.__path.length > 1) {   
+                    var p = this.__path[0];
+                    if (p[0] == this.__MOVETO_OP || p[0] == this.__LINETO_OP) {
+                        var x = p[1];
+                        var y = p[2];
+                    } else if (p[0] == this.__QCURVE_OP) {
+                        var x = p[3];
+                        var y = p[4];
+                    } else {
+                        return;
+                    }
+                    //Debug.write('closePath', x, y);
+                    this.lineTo(x,y);
+                    this.__pathisopen = false;
+                }
+            }
+    
+            override function moveTo(x, y) {
+                if (this.__pathisopen) {
+                    this.__path[this.__path.length] = [this.__MOVETO_OP, x, y];
+                }
+                //Debug.write('moveTo', this.__path);
+            }
+    
+            override function lineTo (x, y) {
+                if (this.__pathisopen) {
+                    this.__path[this.__path.length] = [this.__LINETO_OP, x, y];
+                }
+                //Debug.write('lineTo', this.__path);
+            }
+    
+            override function quadraticCurveTo(cpx, cpy, x, y) {
+                if (this.__pathisopen) {
+                    this.__path[this.__path.length] = [this.__QCURVE_OP, cpx, cpy, x, y];
+                }
+                //Debug.write('quadraticCurveTo', this.__path);
+            }
+
+            static var images = {};
+
+            if ($swf8) {
+                function getImage(name) {
+                    var bitmap = lz.drawview.images[name];
+                    if (! bitmap) {
+                        var container = createEmptyMovieClip("loader",getNextHighestDepth());
+                        if ( name.indexOf('http:') == 0 || name.indexOf('https:') == 0 ) {
+                            var loader = container.createEmptyMovieClip("loader",container.getNextHighestDepth());
+                            loader.loadMovie(name);
+                            container.onEnterFrame = function() {
+                                if(loader._width>0) {
+                                    bitmap = this.copyBitmap(loader, loader._width, loader._height);
+                                    lz.drawview.images[name] = bitmap;
+                                    delete this.onEnterFrame;
+                                    container.removeMovieClip();
+                                }
+                            }
+                        } else {
+                            // measure size
+                            container.attachMovie( name, 'resc', container.getNextHighestDepth());
+                            bitmap = this.copyBitmap(container, container._width, container._height);
+                            lz.drawview.images[name] = bitmap;
+                            container.removeMovieClip();
+                        }
+                    }
+                    return bitmap;
+                }
+            }
+
+            function drawImage(image, x, y, w, h, r) {
+                if ($swf9) {
+                    if ($debug) Debug.warn('Drawview.drawImage() is not yet supported in swf9.');
+                } else {
+                    if (typeof image == 'string') {
+                        image = this.getImage(image);
+                    }
+                    if (! image) return;
+
+                    var m = this.getIdentityMatrix();
+
+                    var tw = w ? w / image.width : 1;
+                    var th = h ? h / image.height : 1;
+                    m.scale(tw, th);
+
+                    if (r != null) m.rotate(r);
+
+                    var tx = x ? x : 0;
+                    var ty = y ? y : 0;
+                    m.translate(tx, ty);
+
+                    this.copyBitmap(image, this.width, this.height, this.__bitmapdata, m);
+                }
+            }
+    
+            var bezierCurveTo_error = 10;
+
+            function bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
+                var error = this.bezierCurveTo_error;
+                
+                // Start from the cursor position, or (0, 0)
+                var x0 = 0, y0 = 0;
+                if (this.__path.length) {
+                    var instr = this.__path[this.__path.length - 1];
+                    x0 = instr[instr.length - 2];
+                    y0 = instr[instr.length - 1];
+                }
+                // The algorithm used is to recursively subdivide the cubic until
+                // it's close enough to a quadratic, and then draw that.
+                // The code below has the effect of
+                //   function draw_cubic(cubic) {
+                //     if (|midpoint(cubic)-midpoint(quadratic)| < error)
+                //       draw_quadratic(qudratic);
+                //     else
+                //       map(draw_cubic, subdivide(cubic));
+                //   }
+                // where the recursion has been replaced by an explicit
+                // work item queue.
+                
+                // To avoid recursion and undue temporary structure, the following
+                // loop has a funny control flow.  Each iteration either pops
+                // the next work item from queue, or creates two new work items
+                // and pushes one to the queue while setting +points+ to the other one.
+                // The loop effectively exits from the *middle*, when the next
+                // work item is null.  (This continues to the loop test,
+                // which then exits.)
+                
+                // each item is a list of control points, with a sentinel of null
+                var work_items = [null]; 
+                // the current work item
+                var points = [{x: x0, y: y0}, {x: cp1x, y: cp1y}, {x: cp2x, y: cp2y}, {x: x, y: y}];
+                while (points) {
+                    // Posit a quadratic.  For C1 continuity, control point has to
+                    // be at the intersection of the tangents.
+                    var q1 = this.intersection.apply(null, points);
+                    var q0 = points[0];
+                    var q2 = points[3];
+                    
+                    if (!q1 || q1 == -1) {
+                    var flush = true;
+                    var start_first = points[0].x == points[1].x && points[0].y == points[1].y;
+                    var second_end = points[2].x == points[3].x && points[2].y == points[3].y;
+                    if (start_first) {
+                        if (second_end) {
+                        this.lineTo(q2.x, q2.y);
+                        } else {
+                        var q1 = points[2];
+                        this.quadraticCurveTo(q1.x, q1.y, q2.x, q2.y);
+                        }
+                    }
+                    else if (second_end) {
+                        var q1 = points[1];
+                        this.quadraticCurveTo(q1.x, q1.y, q2.x, q2.y);
+                    } else {
+                        //both straight lines are collinear
+                        //now we have to test whether they're identical or non-identical
+                        if (!q1) {
+                        q1 = {x:0,y:0};//default-value...
+                        flush = false;
+                        } else {
+                        this.lineTo(q2.x, q2.y);
+                        }
+                    }
+                    if (flush) {
+                        points = work_items.pop();
+                        continue;
+                    }
+                    }
+                    
+                    // Compute the triangle, since the fringe is the subdivision
+                    // if we need that and the peak is the midpoint which we need
+                    // in any case
+                    var m = [points, [], [], []];
+                    for (var i = 1; i < 4; i++) {
+                        for (var j = 0; j < 4 - i; j++) {
+                            var c0 = m[i-1][j];
+                            var c1 = m[i-1][j+1];
+                            m[i][j] = {x: (c0.x + c1.x)/2,
+                                    y: (c0.y + c1.y)/2};
+                        }
+                    }
+                    
+                    var qa = this.midpoint(q0, q1);
+                    var qb = this.midpoint(q1, q2);
+                    var qm = this.midpoint(qa, qb);
+                    // Is the midpoint of the quadratic close to the midpoint of
+                    // the cubic?  If so, use it as the approximation.
+                    if (this.distance(qm, m[3][0]) < error) {
+                        this.quadraticCurveTo(q1.x, q1.y, q2.x, q2.y);
+                        points = work_items.pop();
+                        continue;
+                    }
+                    // Otherwise subdivide the cubic.  The first division is the
+                    // next work item, and the second goes on the work queue.
+                    var left = new Array(4), right = new Array(4);
+                    for (i = 0; i < 4; i++) {
+                        left[i]  = m[i][0];
+                        right[i] = m[3-i][i];
+                    }
+                    points = left;
+                    work_items.push(right);
+                }
+            }
+
+            function __getColor(val) {
+                var ccache = lz.drawview._colorcache;
+                var cachedColor = ccache[val];
+                if (cachedColor == null) {
+                    cachedColor = lz.Utils.hextoint(val);
+                    var values = String(cachedColor).split('.');
+                    var color = values[0];
+                    var alpha = values.length > 1 ? Number('.' + values[1]) * 100 : null;
+                    //Debug.write(color, alpha, val, cachedColor, values);
+                    cachedColor = ccache[val] = {c: color, a: alpha}; 
+                }
+                return cachedColor;
+            }
+    
+            function fill() {
+                if (this.fillStyle instanceof LzCanvasGradient) {
+                    this.fillStyle.__applyTo(this.context);
+                } else {
+                    var color = this.__getColor(this.fillStyle);
+                    var alpha = color.a != null ? color.a : this.globalAlpha;
+                    //Debug.info(this.fillStyle, color.c, alpha, color.a, this.globalAlpha);
+                    this.context.beginFill(color.c, alpha * 100);
+                }
+                this.closePath();
+                this.__playPath(this.context);
+                this.context.endFill();
+                this.__updateSize();
+            }
+    
+            function __playPath(m) {
+                if ($as2) this.context._visible = false;
+                var p = this.__path;
+                //Debug.write(p, m);
+                for (var i = 0; i < p.length; i++) {
+                    var op = p[i];
+                    var optype = op[0];
+                    if (optype == this.__MOVETO_OP) {
+                        //Debug.write(m, 'moveTo', op[1], op[2]);
+                        m.moveTo(op[1], op[2]);
+                    } else if (optype == this.__LINETO_OP) {
+                        //Debug.write(m, 'lineTo', op[1], op[2]);
+                        m.lineTo(op[1], op[2]);
+                    } else if (optype == this.__QCURVE_OP) {
+                        //Debug.write(m, 'quadraticCurveTo', op[1], op[2], op[3], op[4]);
+                        m.curveTo(op[1], op[2], op[3], op[4]);
+                    }
+                }
+                if ($as2) this.context._visible = this.visible;
+            }
+    
+            if ($swf9) {    
+                function clipPath() {
+                    if ($debug) {
+                        Debug.warn('Drawview.clipPath() is not currently supported in swf9.');
+                    }
+                }
+
+                function clipButton() {
+                    if ($debug) {
+                        Debug.warn('Drawview.clipButton() is not currently supported in swf9.');
+                    }
+                }
+            } else {
+                function clip() {
+                    if ($debug) Debug.warn('drawview.clip() is deprecated.  Use clipPath() instead.');
+                    this.clipPath();
+                }
+                function clipPath() {
+                    this.sprite.applyMask(true);
+                    var __clipmc = this.sprite.__LZmaskClip;
+                    this.closePath();
+                    __clipmc.clear();
+                    __clipmc.beginFill(0xffffff, 100);
+                    this.__playPath(__clipmc);
+                    __clipmc.endFill();
+                    this.updateResourceSize();
+                }
+                function clipButton() {
+                    var mc = this.getMCRef();
+                    //Debug.write('clip', this, mc, this.sprite.__LZbuttonRef);
+                    if (! this['__clipmc']) {
+                        this.__clipmc = this.sprite.__LZmovieClipRef.createEmptyMovieClip("$lzclipmc", 6);
+                        this.sprite.__LZbuttonRef.setMask(this.__clipmc);
+                    }
+                    this.closePath();
+
+                    this.__clipmc.clear();
+                    this.__clipmc.beginFill(0xffffff, 100);
+                    this.__playPath(this.__clipmc);
+                    this.__clipmc.endFill();
+                    this.updateResourceSize();
+                }
+            }
+    
+            function stroke() {
+                if (this.strokeStyle instanceof LzCanvasGradient) {
+                    if ($debug) {
+                        Debug.warn ("Gradient line fills aren't supported.");
+                    }
+                    return;
+                }
+                var color = this.__getColor(this.strokeStyle);
+                var alpha = color.a != null ? color.a : this.globalAlpha;
+                this.context.lineStyle(this.lineWidth, color.c, alpha * 100);
+                this.__playPath(this.context);
+                this.context.lineStyle(undefined);
+                this.__updateSize();
+            }
+
+            if ($swf8) {
+                function setWidth(w, ...internal) {
+                    if (internal.length == 0) this.__measurewidth = w == null;
+                    super.setWidth(w);
+                }
+
+                function setHeight(h, ...internal) {
+                    if (internal.length == 0) this.__measureheight = h == null;
+                    super.setHeight(h);
+                }
+            }
+
+            function __updateSize() {
+                if ($swf8) {
+                    var mc = this.sprite.getContext();
+                    if (this.__measurewidth) this.setWidth(mc._width, true);
+                    if (this.__measureheight) this.setHeight(mc._height, true);
+                }
+            }
+    
+            function clear() {
+                this.context.clear();
+                if ($swf9) {
+                } else {
+                    var rect = new flash.geom.Rectangle(0, 0, this.width, this.height);
+                    if (this['__bitmapdata']) this.__bitmapdata.fillRect(rect, 0x000000ff);
+                }
+            }
+    
+            function clearMask() {
+                if (this.sprite.__LZmaskClip) this.sprite.__LZmaskClip.clear();
+            }
+    
+            function createLinearGradient(x0, y0, x1, y1) {
+                var dx = x1-x0;
+                var dy = y1-y0;
+                var r = Math.atan2(dy, dx);
+                var h = Math.sqrt(dx*dx + dy*dy);
+                var w = h;
+                var y = y0;
+                var x = x0;
+                if (y1 < y0) {
+                    y = y1;
+                }
+                if (x1 < x0) {
+                    x = x1;
+                }
+                
+                var g = new LzCanvasGradient(this, {matrixType:"box", x:x, y:y, w:w, h:h, r:r}, false);
+                //Debug.write('createLinearGradient', {matrixType:"box", x:x0, y:y0, w:w, h:h, r:r});
+                return g;
+            }
+    
+            function createRadialGradient(x0, y0, r0, x1, y1, r1) {
+                var w = x1-x0;
+                var h = y1-y0;
+                // Rotation doesn't seem to work
+                var r = r0 != null ? r0 : Math.atan2(h, w);
+                var g = new LzCanvasGradient(this, {matrixType:"box", x:x0, y:y0, w:w, h:h, r:r}, true);
+                //Debug.write('createRadialGradient', {matrixType:"box", x:x0, y:y0, w:w, h:h, r:r});
+                return g;
+            }
+
+            // accumulate rotation
+            var _tr = 0
+            function rotate(r) {
+                this._tr += r;
+            }
+
+            // accumulate translation
+            var _tx = 0;
+            var _ty = 0;
+            function translate(x, y) {
+                this._tx += x;
+                this._ty += y;
+            }
+
+            function save() {
+                // Store this context.
+                this.__contexts.push(this.context);
+
+                // Create new context to draw in
+                var depth = this.__drawing.getNextHighestDepth();
+                this.context = this.__drawing.createEmptyMovieClip('draw' + depth, depth); 
+                // Offset to the center to ensure we can grab the whole thing 
+                this.context._x = this.width * .5;
+                this.context._y = this.height * .5;
+                this.__matrix = this.getIdentityMatrix()
+            }
+
+            function copyBitmap(from, w, h, to, m) {
+                if ($swf9) {
+                    var tmp = new BitmapData(w, h, true, 0x000000ff);
+                } else {
+                    var tmp = new flash.display.BitmapData(w, h, true, 0x000000ff);
+                }
+
+                tmp.draw(from);
+
+                // If to wasn't supplied, return the bitmap as-is.
+                if (! to) {
+                    return tmp;
+                }
+                to.draw(tmp, m, null, null, null, true);
+                tmp.dispose();
+            }
+
+            function restore() {
+                var m = this.getIdentityMatrix()
+                // Move back
+                m.translate(- this.context._x, - this.context._y);
+
+                // apply accumulated translations
+                m.rotate(this._tr);
+                m.translate(this._tx, this._ty);
+                this._tr = this._tx = this._ty = 0;
+
+                //Debug.write(this.context._width, this.context._height);
+                this.copyBitmap(this.__drawing, this.width * 2, this.height * 2, this.__bitmapdata, m)
+
+                this.context.removeMovieClip();
+                this.context = this.__contexts.pop();
+            }
+
+            function fillRect(x, y, w, h) {
+                var color = this.__getColor(this.fillStyle);
+                var alpha = color.a != null ? color.a : this.globalAlpha;
+                var alpha = (color.a * 255) << 24;
+                var colorval = color.c | alpha;
+                //Debug.info(colorval, alpha, color, this.fillStyle)
+
+                if ($swf9) {
+                    var rect = new Rectangle(x, y, w, h);
+                } else {
+                    var rect = new flash.geom.Rectangle(x, y, w, h);
+                }
+                this.__bitmapdata.fillRect(rect, colorval);
+            }
+
+            function getIdentityMatrix() {
+                if ($swf9) {
+                    return new Matrix();
+                } else {
+                    return new flash.geom.Matrix();
+                }
+            }
+        } // End of drawview
+        lz[$lzc$class_drawview.tagname] = $lzc$class_drawview;
+
+        /**
+          * <p>
+          * The <tagname>LzCanvasGradient</tagname> is used by drawviews to describe a gradient fill.
+          * </p>
+          * 
+          * @shortdesc An object for describing gradient fills
+          * @devnote LzCanvasGradient is an opaque object, which is used for assigning to 
+          * other attributes, e.g. fillStyle.  It is also used to add color stops.
+          * An LzCanvasGradient is returned by drawview.createRadialGradient or  
+          * drawview.createRadialGradient.
+          */
+        class LzCanvasGradient {
+            if ($swf9) {
+                #passthrough (toplevel:true) {
+                import flash.geom.Matrix;
+                }#
+            }
+            var _context = null;
+            var _m = null;
+            var _t = null;
+            var _c = [];
+            var _a = [];
+            var _o = [];
+            
+            function LzCanvasGradient(c, m, isradial) {
+                this._context = c;
+                if ($swf9) {
+                    var matrix = new Matrix();
+                    m = matrix.createGradientBox(m.w,m.h,m.r,m.x,m.y);
+                }
+                this._m = m;
+                this._t = isradial ? 'radial' : 'linear';
+                this._c = [];
+                this._a = [];
+                this._o = [];
+            }
+
+            /**
+            * Adds a new stop to a gradient. gradients are rendered such that at the starting point the colour at offset 0 is used, that at the ending point the color at offset 1 is used.  globalAlpha is stored for each gradient step added.
+            * @param Number o: The offset this stop used for placement in the gradient.  Gradients are rendered such that for the starting point the colour at offset 0 is used, that at the ending point the color at offset 1 is used and all colors between those offsets are blended.  Must be less than 0 or greater than 1.
+            * @param Number c: The color to be used at this color.  A hexadecimal value, e.g. 0xffffff
+            */
+            function addColorStop(o, c) {
+                this._o[this._o.length] = o * 255;
+                var color = this._context.__getColor(c);
+                this._c[this._c.length] = color.c;
+                var alpha = color.a != null ? color.a : this._context.globalAlpha;
+                //Debug.info(c, color.c, alpha, color.a, this._context.globalAlpha);
+                this._a[this._a.length] = alpha * 100;
+            }
+
+            /**
+            * @access private
+            */
+            function __applyTo(m) {
+                //Debug.write('LzCanvasGradient.__applyTo', this._t, this._c, this._a, this._o, this._m);
+                m.beginGradientFill(this._t, this._c, this._a, this._o, this._m)
+            }
+        }
+      
+#file 
+
+#file blockclock.lzx
+#line 2
+          
+#file blockclock.lzx
+#line 2
+          LzInstantiateView({'class': lz.script, attrs: {script: function () {
+#beginContent
+#pragma 'scriptElement'
+
+#file blockclock.lzx
+#line 2
+          
+	
+	    var tick;
+
+	    var timerIncrement = 1000;
+
+		var delegate;
+		
+	    function startClock() {
+			tick = new Time();
+			drawClock(tick);
+			delegate = new LzDelegate(this, "updateClock");
+			LzTimer.addTimer(delegate, 1000);
+		}
+		function updateClock() {
+	      var tock = new Time();
+	      if (!tock.equals(tick)) {
+	        tick = tock;
+	        drawClock(tick);
+	      }
+			LzTimer.resetTimer(delegate, 1000);
+		}
+		function drawClock(time) {
+	      block.setAttribute("x", 40 + time.fiveMinuteInterval * 20);
+	      block.setAttribute("y", time.hour * 20);
+	    }
+		
+	    // I store time as the pair (h, m), where h is the hour
+	    // (between 0 and 11 inclusive), and m is the five minute interval
+	    // also between 0 and 11 inclusive).
+	    function Time() {
+	      function equals(time) {
+	        return time != null && this.hour == time.hour && this.fiveMinuteInterval == time.fiveMinuteInterval;
+	      }
+	      var now = new Date();
+	      this.hour = now.getHours() % 12;
+	      this.fiveMinuteInterval = Math.floor(now.getMinutes() / 5);
+	      this.equals = equals;
+	    }
+	  
+	
+#file 
+
+#endContent
+}}}, 1)
+#file blockclock.lzx
+#line 44
+                                                                                                                       dynamic class $lzc$class_$m9 extends $lzc$class_drawview {
+static var attributes = new LzInheritedHash($lzc$class_drawview.attributes);
+function $m1($lzc$ignore) {
+
+#pragma 'withThis'
+
+#file blockclock.lzx
+#line 44
+                                                                                                                       this.setAttribute("width",
+#beginAttribute
+
+#file blockclock.lzx
+#line 44
+                                                                                                                       this.parent.width
+#file 
+
+#endAttribute
+)
+#file 
+
+}
+function $m2() {
+
+#pragma 'withThis'
+
+#file blockclock.lzx
+#line 44
+                                                                                                                       return ([this.parent, "width"])
+#file 
+
+}
+function $m3($lzc$ignore) {
+
+#pragma 'withThis'
+
+#file blockclock.lzx
+#line 44
+                                                                                                                       this.setAttribute("height",
+#beginAttribute
+
+#file blockclock.lzx
+#line 44
+                                                                                                                       this.parent.height
+#file 
+
+#endAttribute
+)
+#file 
+
+}
+function $m4() {
+
+#pragma 'withThis'
+
+#file blockclock.lzx
+#line 44
+                                                                                                                       return ([this.parent, "height"])
+#file 
+
+}
+function $m5($lzc$ignore) {
+
+#pragma 'withThis'
+
+#file blockclock.lzx
+#line 44
+                                                                                                                       this.setAttribute("bgcolor",
+#beginAttribute
+
+#file blockclock.lzx
+#line 44
+                                                                                                                       this.parent.bgcolor
+#file 
+
+#endAttribute
+)
+#file 
+
+}
+function $m6() {
+
+#pragma 'withThis'
+
+#file blockclock.lzx
+#line 44
+                                                                                                                       return ([this.parent, "bgcolor"])
+#file 
+
+}
+function $m8(
+#file blockclock.lzx
+#line 45
+                            ) {
+
+#beginContent
+
+#pragma 'methodName=$m8'
+
+#pragma 'withThis'
+
+#file blockclock.lzx
+#line 45
+                            
+      this.rect(200,200,200,100);
+      this.closePath();
+
+      this.strokeStyle = 0xffff00;
+      this.lineWidth = 5;
+      this.stroke();
+    
+#endContent
+#file 
+
+}
+LzNode.mergeAttributes({}, $lzc$class_$m9.attributes);
+}
+
+#file blockclock.lzx
+#line 44
+                                                                                                                       LzInstantiateView({attrs: {$delegates: ["oninit", "$m8", null], bgcolor: new LzAlwaysExpr("$m5", "$m6"), height: new LzAlwaysExpr("$m3", "$m4"), width: new LzAlwaysExpr("$m1", "$m2"), x: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 44
+                                                                                                                       0
+#file 
+
+#endAttribute
+, y: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 44
+                                                                                                                       0
+#file 
+
+#endAttribute
+}, "class": $lzc$class_$m9}, 1);
+#file blockclock.lzx
+#line 55
+                                                                    LzInstantiateView({attrs: {bgcolor: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 55
+                                                                    0xffffff
+#file 
+
+#endAttribute
+, height: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 55
+                                                                    240
+#file 
+
+#endAttribute
+, width: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 55
+                                                                    240
+#file 
+
+#endAttribute
+, x: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 55
+                                                                    40
+#file 
+
+#endAttribute
+, y: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 55
+                                                                    0
+#file 
+
+#endAttribute
+}, "class": LzView}, 1);
+#file blockclock.lzx
+#line 56
+                                                                     LzInstantiateView({attrs: {$lzc$bind_id: function ($lzc$node:LzNode, $lzc$bind:Boolean=true) {
+if ($lzc$bind) {
+  $lzc$node.id = "block";
+  block = $lzc$node;
+} else if (block === $lzc$node) {
+  block = null;
+  $lzc$node.id = null;
+}
+
+}, bgcolor: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 56
+                                                                     0xff0000
+#file 
+
+#endAttribute
+, height: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 56
+                                                                     20
+#file 
+
+#endAttribute
+, id: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 56
+                                                                     "block"
+#file 
+
+#endAttribute
+, width: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 56
+                                                                     20
+#file 
+
+#endAttribute
+, x: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 56
+                                                                     0
+#file 
+
+#endAttribute
+, y: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 56
+                                                                     0
+#file 
+
+#endAttribute
+}, "class": LzView}, 1);
+#file blockclock.lzx
+#line 58
+                                     dynamic class $lzc$class_$m12 extends $lzc$class_drawview {
+static var attributes = new LzInheritedHash($lzc$class_drawview.attributes);
+function $m11(
+#file blockclock.lzx
+#line 59
+                          $lzc$ignore) {
+
+#beginContent
+
+#pragma 'methodName=$m11'
+
+#pragma 'withThis'
+
+#file blockclock.lzx
+#line 59
+                          
+#file blockclock.lzx
+#line 59
+                          
+   this.strokeStyle = 0x000000;
+   this.moveTo(100, 0);
+   this.lineTo(100, 240);
+   this.lineWidth = 2;
+
+	this.closePath();
+/*
+   this.moveTo(160, 0);
+   this.lineTo(160, 240);
+
+   this.moveTo(220, 0);
+   this.lineTo(220, 240);
+
+   this.moveTo(40, 60);
+   this.lineTo(280, 60);
+
+   this.moveTo(40, 120);
+   this.lineTo(280, 120);
+
+   this.moveTo(40, 180);
+   this.lineTo(280, 180);
+   */
+
+   this.stroke();
+
+   startClock();
+  
+#endContent
+#file 
+
+}
+LzNode.mergeAttributes({}, $lzc$class_$m12.attributes);
+}
+
+#file blockclock.lzx
+#line 58
+                                     LzInstantiateView({attrs: {$delegates: ["oninit", "$m11", null], height: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 58
+                                     240
+#file 
+
+#endAttribute
+, width: 
+#beginAttribute
+
+#file blockclock.lzx
+#line 58
+                                     240
+#file 
+
+#endAttribute
+}, "class": $lzc$class_$m12}, 1);canvas.initDone()

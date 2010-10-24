@@ -1,0 +1,70 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" 
+  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!--
+  Block Clock
+
+  Copyright 2002 Tom White
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<svg viewBox="0 0 12 12" preserveAspectRatio="xMidYMin"
+     xmlns="http://www.w3.org/2000/svg"
+     scriptImplementation="Adobe"
+     onload="startClock(evt)">
+  <script type="text/ecmascript"><![CDATA[
+    var timerIncrement = 1000;
+    var block;
+    var sun;
+    function startClock(evt) {
+      window.updateClock = updateClock
+      block = evt.target.ownerDocument.getElementById("block");
+      sun = evt.target.ownerDocument.getElementById("sun");
+      updateClock();
+    }
+    function updateClock() {
+      drawClock(new Time());
+      setTimeout("updateClock()", timerIncrement);
+    }
+    function drawClock(time) {
+      block.setAttribute("x", time.fiveMinuteInterval);
+      block.setAttribute("y", time.hour);
+      sun.setAttribute("cx", 12 * time.fraction);
+      sun.setAttribute("cy", time.hour + time.fraction);
+    }
+    
+    // I store time as hours, minutes, seconds, the fraction of the hour, and the five minute interval.
+    function Time() {
+      var now = new Date();
+      this.hour = now.getHours() % 12;
+      this.fiveMinuteInterval = Math.floor(now.getMinutes() / 5);
+      this.minutes = now.getMinutes();
+      this.seconds = now.getSeconds();
+      this.fraction = (this.minutes * 60 + this.seconds) / 3600;
+    }      
+  ]]></script>
+  
+  <desc>A combined digital and analogue block clock.</desc>
+  <title>Block Clock</title>
+
+  <rect id="block" x="-1" y="-1" width="1" height="1" fill="red" />
+  <circle id="sun" cx="-1" cy="-1" r="0.15" fill="yellow" />
+  <g stroke="black" stroke-width="0.1">
+    <line x1="3" y1="0" x2="3" y2="12"/>
+    <line x1="6" y1="0" x2="6" y2="12"/>
+    <line x1="9" y1="0" x2="9" y2="12"/>
+    <line x1="0" y1="3" x2="12" y2="3"/>
+    <line x1="0" y1="6" x2="12" y2="6"/>
+    <line x1="0" y1="9" x2="12" y2="9"/>
+  </g>
+</svg>

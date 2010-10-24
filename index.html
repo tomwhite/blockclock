@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html><head><title>A New Clock Mechanism</title></head><body>
+  <script language="JavaScript">
+      function popUpClock(url, width, height) {
+        var w = window.open('', 'clock', 'width=' + width + ',height=' + height);
+        w.focus();
+        w.location=url;
+      }
+  </script>
+  
+  
+    <h1>The Block Clock</h1>
+
+    <p>
+    It is a good thing that we take clock faces for granted since it allows them to be read without any fuss or hinderance. We just need to know the time. There are certainly many different designs for clock faces, but these are mostly variations on the familiar analogue or digital display.
+    In this article I present a new <i>mechanism</i> for a clock face in both analogue and digital forms.
+    The new design is especially suitable for electronic displays: in fact it is modelled on the way a television produces its picture.
+    </p>
+
+    <h1>Television Rasters</h1>
+
+    <p>
+    Consider the raster scan of a television - the electron beam sweeps out a path from the top left of the screen to the bottom right to produce the image. It scans one line at a time, from left to right, then switches back to the left hand side to begin the next line. While switching back the beam is turned off so that no trace is seen on the screen. When the scan reaches the bottom right hand corner it switches back to the top left corner - turning off the beam again  - then begins the next picture frame.
+    </p>
+
+    <p>
+    To see how the raster scan is a type of clock, picture a square screen with 12 lines.
+    Furthermore, imagine that the electron beam moves at a constant speed and that the switchbacks when the beam produces no trace occur instantaneously. If the beam moves at a rate of one line per hour then one frame would take 12 hours to trace. The line number tells you the hour of the day, and the distance along the line tells you the number of minutes in the hour. Note that the lines are angled downwards unlike in a real television.
+    </p>
+
+    <p>
+    <a href="javascript:popUpClock('rasterclock.svg', 280, 280)"><img src="images/rasterclock.png" width="280" height="280" border="0" alt="A static image of the raster block clock captured at 5:36"/></a>
+    </p>
+
+    <p>
+    Click on the image to view a working clock. You will need an SVG plug-in in your browser which you can get for free from <a href="http://www.adobe.com/svg/viewer/install/">here</a>.
+    </p>
+
+    <p>
+    If the left and right hand sides of the screen are identified - that is, joined together - and the top and bottom sides are identified then the display becomes a <i>torus</i>, which is a doughnut shape (with a hole in it). The disc moves in a continuous line on the surface of the torus. This shows that the jumps the disc makes from one side to the other in the rater clock above are merely a result of the the way the display is drawn. The clock is actually an analogue clock. The orange disc is like the sun moving across the sky.
+    </p>
+
+    <h1>Digital Displays</h1>
+
+    <p>
+    It is straightforward to create a related digital clock in which the time changes from one discrete state to another. Overlay the clock with a grid of squares measuring 12 units by 12 units
+    and colour the square containing the disc (the "electron beam").
+    </p>
+
+    <p>
+    <a href="javascript:popUpClock('blockclock.svg', 240, 240)"><img src="images/blockclock.png" width="240" height="240" border="0" alt="A static image of the digital block clock captured at 10:44"/></a>
+    </p>
+
+    <p>
+    (Click on the image for a working clock.) This change throws away time information since you can only tell which 5 minute interval the current time falls in, in the same way that a traditional digital clock reading <b>12:34</b> only specifies the 60 second interval that the current time falls in. However, a precision of 5 minutes is more than adequate for most purposes of keeping track of the time, and this new way of reading the time has several advantages over the traditional digital clock.
+    </p>
+
+    <p>
+    The block clock is a <i>gestalt</i> - you can see the time without having to read the digits. This is like a traditional analogue clock face, where you understand what the time is from the position of the hands, rather than from the numerals around the dial, which may indeed not be present. All traditional digital clocks have to have digits!
+    </p>
+
+    <p>
+    The traditional digital clock often suffers from being too precise, you can't get a rough idea of the time by glancing at a digital clock. Normally when people want to know the time it is because they want to know how long it is before an event is due to occur (catching a train, watching a television raster). If the event is more than ten minutes or so off then the precision of a traditional digital clock is too great. "OK, it's 8:53 and I'm seeing the doctor at 10:40 - that's in ..." With an analogue clock you can see how far away the event is just by looking at the distance the hands have to travel. With the block clock you can see by observing how far the block has to move. When more precision is needed then the disc of the analogue form of the block clock can be superimposed on the display to see exactly how close you are to missing your train (say). <a href="javascript:popUpClock('precisionblockclock.svg', 240, 240)">Click here for a working precision block clock.</a>
+    </p>
+
+    <p>
+    The grid form of the block clock makes it easy to record events on its surface. For example, an electronic personal digital assistant that uses a block clock could mark a 10 o'clock appointment on the display. The user can then see how far off the appointment is. A nice way of marking the local times of sunrise and sunset is to render the hours of darkness as a block of a darker colour. The daylight clock (<a href="javascript:popUpClock('daylightclock.svg', 240, 240)">click for a working clock</a>) shows the morning sunrise or the evening sunset: which boundary you see depends on whether you are viewing this clock before or after midday. (Of course determining the local times of sunrise and sunset depends on the latitude and longitude, this example is set to show the hours of darkness for London, UK.)
+    </p>
+
+    <h1>Developing Intuition</h1>
+
+    <p>
+    A possible objection to the block clock is that it is hard to read. Personally I have been using the block clock on my computer now for several weeks and I no longer have to pause to read the time. It is almost as natural as glancing at my (analogue) watch.
+    </p>
+
+    <h1>Technical Notes</h1>
+
+    <p>
+    The clocks on this page have been implemented using <a href="http://www.w3.org/TR/SVG/">Scalable Vector Graphics</a> (SVG), which is "a language for describing two-dimensional vector and mixed vector/raster graphics in XML". Browser plug-ins for rendering SVG are freely available, I use the <a href="http://www.adobe.com/svg/viewer/install/">one from Adobe</a>.
+    </p>
+
+    <p>
+    All of the clocks on this page, except the "daylight" clock, may be freely used as long as you retain the copyright line in the code and provide an acknowledgment to me. Modification of the code is allowed under the terms of the <a href="LICENSE.txt">Apache 2.0 Licence</a>.
+    </p>
+
+    <p>
+    I have chosen not to embed the dynamic clocks into this page since it can be fraught with browser compatibility problems. However, the following HTML allows you to embed one of the clocks in your page - see <a href="http://www.protocol7.com/svg-wiki/ow.asp?EmbedingSvgInHTML">this SVG wiki</a> for  tips and discussion. Note that the width and height of the clock can be adjusted to fit the clock into any space desired.
+    <pre>
+    
+  &lt;object data="http://tomwhite.github.com/blockclock/blockclock.svg" type="image/svg+xml" width="120" height="120"&gt;
+    &lt;embed src="http://tomwhite.github.com/blockclock/blockclock.svg" width="120" height="120" type="image/svg+xml"
+            pluginspage="http://www.adobe.com/svg/viewer/install/" /&gt;
+  &lt;/object&gt;
+    
+    </pre>
+    </p>
+
+    <h1>References</h1>
+
+    <p>
+    Dershowitz, Nachum, and Reingold, Edward M., (1997), <b>Calendrical Calculations</b>, Cambridge University Press.
+    </p>
+
+
+    <p>
+    <i>Copyright (C) 2002-2003 Tom White</i>
+    </p>
+
+  
+</body></html>
